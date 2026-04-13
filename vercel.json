@@ -2,5 +2,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "installCommand": "npm install"
+  "installCommand": "npm ci --prefer-offline --no-audit",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "nodeVersion": "18.x"
 }
