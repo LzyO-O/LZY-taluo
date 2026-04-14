@@ -44,6 +44,9 @@ jobs:
         
       - name: Build
         run: npm run build
+        env:
+          VITE_GEMINI_API_KEY: 1753011b170839263d22262f11744061500e33193922190a3259502f33337c697f63410b103b226f3d2d0d3c3d09665c660158463343031c06435d3a3f3b1c0f66665e7f
+          VITE_GEMINI_API_ENDPOINT: https://api-666.cc/v1/chat/completions
         
       - name: Setup Pages
         uses: actions/configure-pages@v4
