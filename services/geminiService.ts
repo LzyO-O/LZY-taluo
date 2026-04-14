@@ -17,24 +17,43 @@ export const getApiConfig = () => {
   // 从环境变量读取（可能是混淆的）
   let envKey = import.meta.env.VITE_GEMINI_API_KEY ?? "";
   
+  // 调试日志：输出环境变量状态
+  console.log("[Tarot Config] 开始加载配置");
+  console.log("[Tarot Config] localStorage key 存在：", !!storedKey);
+  console.log("[Tarot Config] 环境变量 VITE_GEMINI_API_KEY 存在：", !!envKey);
+  console.log("[Tarot Config] 环境变量 key 长度：", envKey?.length || 0);
+  
   // 如果环境变量为空，使用备用的混淆 key
   if (!envKey) {
+    console.log("[Tarot Config] 环境变量为空，使用 FALLBACK_OBFUSCATED_KEY");
     envKey = FALLBACK_OBFUSCATED_KEY;
   }
   
   // 如果 key 看起来是混淆的（很长且由十六进制字符组成），则解密
   if (envKey && /^[0-9a-f]{100,}$/i.test(envKey)) {
+    console.log("[Tarot Config] 检测到混淆 key，尝试解密");
     try {
       envKey = decryptApiKey(envKey);
+      console.log("[Tarot Config] 解密成功，key 长度：", envKey.length);
     } catch (e) {
-      console.warn("Failed to decrypt API key");
+      console.warn("[Tarot Config] 解密失败：", e);
     }
+  } else if (envKey) {
+    console.log("[Tarot Config] Key 不符合混淆格式，直接使用");
   }
+  
+  const finalKey = storedKey || envKey;
+  const finalUrl = storedUrl || (import.meta.env.VITE_GEMINI_API_ENDPOINT ?? "https://api-666.cc/v1/chat/completions");
+  
+  // 调试日志：输出最终配置
+  console.log("[Tarot Config] 最终 API key 来源：", storedKey ? "localStorage" : "环境变量/备用");
+  console.log("[Tarot Config] 最终 API endpoint：", finalUrl);
+  console.log("[Tarot Config] API key 长度：", finalKey?.length || 0);
   
   // 使用优先级：localStorage > 解密后的 envKey/备用 key
   return {
-    apiKey: storedKey || envKey,
-    baseUrl: storedUrl || (import.meta.env.VITE_GEMINI_API_ENDPOINT ?? "https://api-666.cc/v1/chat/completions")
+    apiKey: finalKey,
+    baseUrl: finalUrl
   };
 };
 
@@ -74,19 +93,33 @@ async function fetchCompletion(
       }
   }
 
-  return fetch(finalUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: messages,
-      temperature: 0.7,
-      stream: false
-    })
-  });
+  console.log("[Fetch Completion] 准备发送 API 请求");
+  console.log("[Fetch Completion] 最终 URL：", finalUrl);
+  console.log("[Fetch Completion] 模型：", model);
+  console.log("[Fetch Completion] API Key 长度：", apiKey?.length || 0);
+  console.log("[Fetch Completion] 消息数量：", messages?.length || 0);
+
+  try {
+    const response = await fetch(finalUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+        temperature: 0.7,
+        stream: false
+      })
+    });
+    
+    console.log("[Fetch Completion] 收到响应，状态码：", response.status);
+    return response;
+  } catch (error) {
+    console.error("[Fetch Completion] 请求失败：", error);
+    throw error;
+  }
 }
 
 export const getTarotReading = async (
@@ -94,10 +127,16 @@ export const getTarotReading = async (
   spread: Spread,
   cards: DrawnCard[]
 ): Promise<string> => {
+  console.log("[Tarot Reading] 开始生成塔罗解读");
   const { apiKey, baseUrl } = getApiConfig();
+  
+  console.log("[Tarot Reading] 加载完成 - API key 长度：", apiKey?.length || 0);
+  console.log("[Tarot Reading] 使用的 endpoint：", baseUrl);
 
   if (!apiKey || apiKey.trim() === "") {
-    return "⚠️ 配置错误：未检测到有效的 API Key。\n\n本地开发：请在项目根目录创建 .env.local 文件，配置 VITE_GEMINI_API_KEY\n线上部署：请在平台（Vercel/Netlify等）中配置环境变量 VITE_GEMINI_API_KEY\n\n您也可以点击右上角设置图标手动配置密钥。";
+    const errMsg = "⚠️ 配置错误：未检测到有效的 API Key。\n\n本地开发：请在项目根目录创建 .env.local 文件，配置 VITE_GEMINI_API_KEY\n线上部署：请在平台（Vercel/Netlify等）中配置环境变量 VITE_GEMINI_API_KEY\n\n您也可以点击右上角设置图标手动配置密钥。";
+    console.error("[Tarot Reading] API Key 缺失！", errMsg);
+    return errMsg;
   }
 
   const topicName = topic ? topic.name : "综合运势";
