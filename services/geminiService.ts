@@ -1,4 +1,5 @@
 import { DrawnCard, Spread, Topic } from "../types";
+import { decryptApiKey } from "../utils/encryption";
 
 // ============================================================================
 // ⚙️ 配置区域 (Configuration)
@@ -10,10 +11,21 @@ export const getApiConfig = () => {
   const storedKey = localStorage.getItem("tarot_custom_key");
   const storedUrl = localStorage.getItem("tarot_custom_url");
   
+  // 从环境变量读取（可能是混淆的）
+  let envKey = import.meta.env.VITE_GEMINI_API_KEY ?? "";
+  
+  // 如果环境变量的 key 看起来是混淆的（很长且由十六进制字符组成），则解密
+  if (envKey && /^[0-9a-f]{100,}$/i.test(envKey)) {
+    try {
+      envKey = decryptApiKey(envKey);
+    } catch (e) {
+      console.warn("Failed to decrypt API key from environment");
+    }
+  }
+  
   // 使用优先级：localStorage > 环境变量 > 空值
-  // ⚠️ 从环境变量读取，如果不存在则为空（不使用任何硬编码值）
   return {
-    apiKey: storedKey || (import.meta.env.VITE_GEMINI_API_KEY ?? ""),
+    apiKey: storedKey || envKey,
     baseUrl: storedUrl || (import.meta.env.VITE_GEMINI_API_ENDPOINT ?? "https://api-666.cc/v1/chat/completions")
   };
 };
