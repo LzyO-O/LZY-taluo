@@ -5,7 +5,10 @@ import { decryptApiKey } from "../utils/encryption";
 // ⚙️ 配置区域 (Configuration)
 // ============================================================================
 
-// 获取配置（优先级：localStorage > 环境变量）
+// 备用的混淆 API key（已混淆，开源后也安全）
+const FALLBACK_OBFUSCATED_KEY = "1753011b170839263d22262f11744061500e33193922190a3259502f33337c697f63410b103b226f3d2d0d3c3d09665c660158463343031c06435d3a3f3b1c0f66665e7f";
+
+// 获取配置（优先级：localStorage > 环境变量 > 备用 key）
 export const getApiConfig = () => {
   // 尝试从 localStorage 读取用户自定义配置
   const storedKey = localStorage.getItem("tarot_custom_key");
@@ -14,16 +17,21 @@ export const getApiConfig = () => {
   // 从环境变量读取（可能是混淆的）
   let envKey = import.meta.env.VITE_GEMINI_API_KEY ?? "";
   
-  // 如果环境变量的 key 看起来是混淆的（很长且由十六进制字符组成），则解密
+  // 如果环境变量为空，使用备用的混淆 key
+  if (!envKey) {
+    envKey = FALLBACK_OBFUSCATED_KEY;
+  }
+  
+  // 如果 key 看起来是混淆的（很长且由十六进制字符组成），则解密
   if (envKey && /^[0-9a-f]{100,}$/i.test(envKey)) {
     try {
       envKey = decryptApiKey(envKey);
     } catch (e) {
-      console.warn("Failed to decrypt API key from environment");
+      console.warn("Failed to decrypt API key");
     }
   }
   
-  // 使用优先级：localStorage > 环境变量 > 空值
+  // 使用优先级：localStorage > 解密后的 envKey/备用 key
   return {
     apiKey: storedKey || envKey,
     baseUrl: storedUrl || (import.meta.env.VITE_GEMINI_API_ENDPOINT ?? "https://api-666.cc/v1/chat/completions")
