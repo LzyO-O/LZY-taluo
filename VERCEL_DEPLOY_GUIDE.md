@@ -36,8 +36,10 @@ https://vercel.com/new/git/third-party-install?repository-url=https://github.com
 
 | 名称 | 值 |
 |------|-----|
-| `VITE_GEMINI_API_KEY` | `your-actual-api-key-here` |
+| `VITE_GEMINI_API_KEY` | `your-api-key-here` |
 | `VITE_GEMINI_API_ENDPOINT` | `https://api-666.cc/v1/chat/completions` |
+
+⚠️ **安全提示**：请将 `your-api-key-here` 替换为你自己的 API key，**不要提交真实的 key 到 GitHub**。
 
 #### 第 3 步：点击 "Deploy"
 
@@ -77,9 +79,11 @@ https://vercel.com/new/git/third-party-install?repository-url=https://github.com
    - 选择您的项目
    - 进入 "Settings" → "Environment Variables"
    - 添加：
-     - `VITE_GEMINI_API_KEY`: `your-actual-api-key-here`
+     - `VITE_GEMINI_API_KEY`: `your-api-key-here`
      - `VITE_GEMINI_API_ENDPOINT`: `https://api-666.cc/v1/chat/completions`
    - 保存并重新部署
+   
+   ⚠️ **安全提示**：请将 `your-api-key-here` 替换为你自己的 API key
 
    方法 2: 使用部署脚本
    ```bash
@@ -103,9 +107,11 @@ https://vercel.com/new/git/third-party-install?repository-url=https://github.com
 
 4. **添加以下变量**
    ```
-   VITE_GEMINI_API_KEY = your-actual-api-key-here
+   VITE_GEMINI_API_KEY = your-api-key-here
    VITE_GEMINI_API_ENDPOINT = https://api-666.cc/v1/chat/completions
    ```
+   
+   ⚠️ **安全提示**：请将 `your-api-key-here` 替换为你自己的 API key
 
 5. **保存更改**
 

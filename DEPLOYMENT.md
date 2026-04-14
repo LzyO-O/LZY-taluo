@@ -23,9 +23,11 @@
 在 Vercel 项目设置中，添加以下环境变量：
 
 ```bash
-VITE_GEMINI_API_KEY=your-actual-api-key-here
+VITE_GEMINI_API_KEY=your-api-key-here
 VITE_GEMINI_API_ENDPOINT=https://api-666.cc/v1/chat/completions
 ```
+
+⚠️ **安全提示**：请将 `your-api-key-here` 替换为你自己的 API key，**不要提交真实的 key 到 GitHub**。
 
 #### 步骤 3: 部署
 - Vercel 会自动检测到 `vercel.json` 配置
@@ -55,9 +57,11 @@ VITE_GEMINI_API_ENDPOINT=https://api-666.cc/v1/chat/completions
 在 "Site settings" → "Build & deploy" → "Environment" 中添加：
 
 ```bash
-VITE_GEMINI_API_KEY=your-actual-api-key-here
+VITE_GEMINI_API_KEY=your-api-key-here
 VITE_GEMINI_API_ENDPOINT=https://api-666.cc/v1/chat/completions
 ```
+
+⚠️ **安全提示**：请将 `your-api-key-here` 替换为你自己的 API key，**不要提交真实的 key 到 GitHub**。
 
 #### 步骤 4: 部署
 - 点击 "Deploy site"
