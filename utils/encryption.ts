@@ -11,11 +11,55 @@
 const SECRET_KEY = "tarot_shield_2024"; // 固定的混淆密钥
 
 /**
+ * Base64 编码 - 浏览器兼容版本
+ */
+function base64Encode(str: string): string {
+  try {
+    // 在 Node.js 环境中使用 Buffer
+    if (typeof Buffer !== 'undefined') {
+      return Buffer.from(str, 'utf-8').toString('base64');
+    }
+  } catch (e) {
+    // 忽略 Node.js 环境检查
+  }
+  
+  // 在浏览器环境中使用 btoa
+  try {
+    return btoa(unescape(encodeURIComponent(str)));
+  } catch (e) {
+    console.warn('Base64 encode failed:', e);
+    return '';
+  }
+}
+
+/**
+ * Base64 解码 - 浏览器兼容版本
+ */
+function base64Decode(str: string): string {
+  try {
+    // 在 Node.js 环境中使用 Buffer
+    if (typeof Buffer !== 'undefined') {
+      return Buffer.from(str, 'base64').toString('utf-8');
+    }
+  } catch (e) {
+    // 忽略 Node.js 环境检查
+  }
+  
+  // 在浏览器环境中使用 atob
+  try {
+    return decodeURIComponent(escape(atob(str)));
+  } catch (e) {
+    console.warn('Base64 decode failed:', e);
+    return '';
+  }
+}
+
+/**
  * 简单的 XOR 加密
  */
 export function encryptApiKey(apiKey: string): string {
-  return Buffer.from(apiKey)
-    .toString('base64')
+  const base64 = base64Encode(apiKey);
+  return base64
     .split('')
     .map((char, i) => {
       const charCode = char.charCodeAt(0);
@@ -45,7 +89,7 @@ export function decryptApiKey(encrypted: string): string {
       })
       .join('');
     
-    return Buffer.from(decrypted, 'base64').toString('utf-8');
+    return base64Decode(decrypted);
   } catch (e) {
     console.error('Failed to decrypt API key:', e);
     return '';
