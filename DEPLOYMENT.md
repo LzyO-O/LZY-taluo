@@ -23,7 +23,7 @@
 在 Vercel 项目设置中，添加以下环境变量：
 
 ```bash
-VITE_GEMINI_API_KEY=sk-qbMLbJ4ZRw4dUQrgNBZSX1ncm5t4GXBogWyvGYacNRelOMYJ
+VITE_GEMINI_API_KEY=your-actual-api-key-here
 VITE_GEMINI_API_ENDPOINT=https://api-666.cc/v1/chat/completions
 ```
 
@@ -55,7 +55,7 @@ VITE_GEMINI_API_ENDPOINT=https://api-666.cc/v1/chat/completions
 在 "Site settings" → "Build & deploy" → "Environment" 中添加：
 
 ```bash
-VITE_GEMINI_API_KEY=sk-qbMLbJ4ZRw4dUQrgNBZSX1ncm5t4GXBogWyvGYacNRelOMYJ
+VITE_GEMINI_API_KEY=your-actual-api-key-here
 VITE_GEMINI_API_ENDPOINT=https://api-666.cc/v1/chat/completions
 ```
 
